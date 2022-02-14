@@ -5,7 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerMotor))]
 public class PlayerController : MonoBehaviour
 {
-    public float speed = 5f;
+    public float movementSpeed = 10f;
+    public float mouseSpeed = 20f;
     PlayerMotor motor;
 
     // Start is called before the first frame update
@@ -17,10 +18,24 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float horizontalMovement = Input.GetAxisRaw("Horizontal") * speed * Time.deltaTime;
-        float verticalMovement = Input.GetAxisRaw("Vertical") * speed * Time.deltaTime;
+        //player movement 
+        float horizontalMovement = Input.GetAxisRaw("Horizontal");
+        float verticalMovement = Input.GetAxisRaw("Vertical");
 
-        Vector3 movement = transform.right * horizontalMovement + transform.forward * verticalMovement;
+        Vector3 horizontalMove = transform.right * horizontalMovement;
+        Vector3 verticalMove = transform.forward * verticalMovement;
+        Vector3 movement = (horizontalMove + verticalMove).normalized * movementSpeed;
         motor.Move(movement);
+
+        //player rotation on y axis
+        float mouseX = Input.GetAxisRaw("Mouse X");
+        Vector3 yRotation = new Vector3(0f, mouseX, 0f) * mouseSpeed;
+        motor.PlayerRotate(yRotation);
+
+        //camera rotation on x axis
+        float mouseY = Input.GetAxisRaw("Mouse Y");
+        Vector3 xRotation = new Vector3(mouseY, 0f, 0f) * mouseSpeed;
+        motor.CameraRotate(xRotation);
     }
 }
+
